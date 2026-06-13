@@ -1,4 +1,4 @@
-import { predict, train, getStatus } from "./api.js";
+import { predict, train, getStatus } from "./app";
 
 document.getElementById("submit").onclick = async () => {
   const input = document.getElementById("input").value;
