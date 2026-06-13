@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Local AI Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Local AI Dashboard</h1>
+    <p>Frontend hosted on GitHub Pages — Backend running on localhost</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>Input</h2>
+      <textarea id="input" placeholder="Type something for the model..."></textarea>
+      <button id="submit">Run Prediction</button>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="output">Waiting for input...</pre>
+    </section>
+
+    <section class="card">
+      <h2>Training</h2>
+      <button id="train">Run Training Step</button>
+      <pre id="trainStatus">No training yet.</pre>
+    </section>
+
+    <section class="card">
+      <h2>System Status</h2>
+      <button id="refreshStatus">Refresh Status</button>
+      <pre id="statusBox">Loading...</pre>
+    </section>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+
+</body>
+</html>
