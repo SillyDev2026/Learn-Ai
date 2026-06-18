@@ -1,45 +1,57 @@
-const BACKEND = "http://localhost:5000";
+import { predict, train, getStatus } from "./app.js";
 
-async function apiPost(path, data) {
-  try {
-    const res = await fetch(`${BACKEND}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+const $ = (id) => document.getElementById(id);
 
-    if (!res.ok) {
-      throw new Error(`Backend returned ${res.status}`);
-    }
+function addChatMessage(role, text) {
+  const log = $("chatLog");
+  const div = document.createElement("div");
+  div.className = `chat-msg ${role}`;
+  div.innerText = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
 
-    return await res.json();
-  } catch (err) {
-    return { error: true, message: `POST ${path} failed: ${err.message}` };
+$("chatSend").onclick = async () => {
+  const text = $("chatInput").value.trim();
+  if (!text) return;
+
+  addChatMessage("user", text);
+  $("chatInput").value = "";
+
+  const result = await predict(text);
+  const reply = result.assistant || "[no response]";
+  addChatMessage("assistant", reply);
+};
+$("trainSubmit").onclick = async () => {
+  const input = $("trainInput").value.trim();
+  const output = $("trainOutput").value.trim();
+
+  if (!input || !output) {
+    alert("Both training fields are required.");
+    return;
   }
-}
 
-async function apiGet(path) {
-  try {
-    const res = await fetch(`${BACKEND}${path}`);
+  const result = await fetch("http://localhost:5000/train", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sample: { input, output } })
+  }).then(r => r.json());
 
-    if (!res.ok) {
-      throw new Error(`Backend returned ${res.status}`);
-    }
+  addChatMessage("assistant", "Learned new example.");
+};
 
-    return await res.json();
-  } catch (err) {
-    return { error: true, message: `GET ${path} failed: ${err.message}` };
-  }
-}
+$("submit").onclick = async () => {
+  const input = $("input").value;
+  const result = await predict(input);
+  $("output").innerText = result.assistant || JSON.stringify(result, null, 2);
+};
 
-export async function predict(input) {
-  return apiPost("/predict", { input });
-}
+$("refreshStatus").onclick = async () => {
+  const status = await getStatus();
+  $("statusBox").innerText = JSON.stringify(status, null, 2);
+};
 
-export async function train() {
-  return apiPost("/train", {});
-}
-
-export async function getStatus() {
-  return apiGet("/status");
-}
+window.onload = async () => {
+  const status = await getStatus();
+  $("statusBox").innerText = JSON.stringify(status, null, 2);
+};

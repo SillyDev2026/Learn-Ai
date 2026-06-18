@@ -1,46 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Local AI Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
+<main>
 
-<body>
+  <!-- CHAT PANEL -->
+  <section class="panel chat-panel">
+    <h2>Chat</h2>
+    <div id="chatLog" class="chat-log"></div>
 
-  <header>
-    <h1>Local AI Dashboard</h1>
-    <p>Frontend hosted on GitHub Pages — Backend running on localhost</p>
-  </header>
+    <div class="chat-input-row">
+      <input id="chatInput" placeholder="Say something..." />
+      <button id="chatSend" class="primary">Send</button>
+    </div>
+  </section>
 
-  <main>
+  <!-- TRAINING PANEL -->
+  <section class="panel train-panel">
+    <h2>Training</h2>
 
-    <section class="card">
-      <h2>Input</h2>
-      <textarea id="input" placeholder="Type something for the model..."></textarea>
-      <button id="submit">Run Prediction</button>
-    </section>
+    <textarea id="trainInput" placeholder="User message..."></textarea>
+    <textarea id="trainOutput" placeholder="Correct assistant reply..."></textarea>
 
-    <section class="card">
-      <h2>Output</h2>
-      <pre id="output">Waiting for input...</pre>
-    </section>
+    <button id="trainSubmit" class="warning">Teach Model</button>
+  </section>
 
-    <section class="card">
-      <h2>Training</h2>
-      <button id="train">Run Training Step</button>
-      <pre id="trainStatus">No training yet.</pre>
-    </section>
+  <!-- RAW MODEL INPUT PANEL -->
+  <section class="panel input-panel">
+    <h2>Raw Model Input</h2>
+    <textarea id="input" placeholder="Direct prompt to /predict"></textarea>
+    <button id="submit" class="secondary">Run Raw Prediction</button>
+  </section>
 
-    <section class="card">
-      <h2>System Status</h2>
-      <button id="refreshStatus">Refresh Status</button>
-      <pre id="statusBox">Loading...</pre>
-    </section>
+  <!-- STATUS PANEL -->
+  <section class="panel status-panel">
+    <h2>System Status</h2>
+    <button id="refreshStatus" class="secondary">Refresh</button>
+    <pre id="statusBox">Loading...</pre>
+  </section>
 
-  </main>
-
-  <!-- Only load ui.js — it will import app.js -->
-  <script type="module" src="js/ui.js"></script>
-
-</body>
-</html>
+</main>

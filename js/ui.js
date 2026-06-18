@@ -1,32 +1,64 @@
 import { predict, train, getStatus } from "./app.js";
 
-document.getElementById("submit").onclick = async () => {
-  const input = document.getElementById("input").value;
+const $ = (id) => document.getElementById(id);
 
+/* -----------------------------
+   CHAT MESSAGE RENDERING
+----------------------------- */
+function addChatMessage(role, text) {
+  const log = $("chatLog");
+  const div = document.createElement("div");
+  div.className = `chat-msg ${role}`;
+  div.innerText = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+/* -----------------------------
+   CHAT SEND HANDLER
+----------------------------- */
+$("chatSend").onclick = async () => {
+  const text = $("chatInput").value.trim();
+  if (!text) return;
+
+  addChatMessage("user", text);
+  $("chatInput").value = "";
+
+  const result = await predict(text);
+  const reply = result.assistant || "[no response]";
+  addChatMessage("assistant", reply);
+};
+
+$("trainSubmit").onclick = async () => {
+  const input = $("trainInput").value.trim();
+  const output = $("trainOutput").value.trim();
+
+  if (!input || !output) {
+    alert("Both training fields are required.");
+    return;
+  }
+
+  const result = await fetch("http://localhost:5000/train", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sample: { input, output } })
+  }).then(r => r.json());
+
+  addChatMessage("assistant", "Learned new example.");
+};
+
+$("submit").onclick = async () => {
+  const input = $("input").value;
   const result = await predict(input);
-
-  document.getElementById("output").innerText =
-    JSON.stringify(result, null, 2);
+  $("output").innerText = result.assistant || JSON.stringify(result, null, 2);
 };
 
-document.getElementById("train").onclick = async () => {
-  const result = await train();
-
-  document.getElementById("trainStatus").innerText =
-    JSON.stringify(result, null, 2);
-};
-
-document.getElementById("refreshStatus").onclick = async () => {
+$("refreshStatus").onclick = async () => {
   const status = await getStatus();
-
-  document.getElementById("statusBox").innerText =
-    JSON.stringify(status, null, 2);
+  $("statusBox").innerText = JSON.stringify(status, null, 2);
 };
 
-// Auto-load status on page load
 window.onload = async () => {
   const status = await getStatus();
-
-  document.getElementById("statusBox").innerText =
-    JSON.stringify(status, null, 2);
+  $("statusBox").innerText = JSON.stringify(status, null, 2);
 };
